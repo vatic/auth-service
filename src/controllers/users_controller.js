@@ -21,10 +21,8 @@ const UsersController = {
       { name: 'Alex Mir', email: 'a.mir@mail.ru' },
   ],
 
-  index: () => {
-    console.log('fdsa:f: ', UsersController.users);
-    return UsersController.users;
-  },
+  index: () => UsersController.users,
+  show: params => UsersController.users[params.id - 1],
 };
 
 module.exports = UsersController;

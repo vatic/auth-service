@@ -2,7 +2,6 @@ const routes = {
   users: [
     {
       action: 'index',
-      controller: 'UsersController',
       http: { method: 'get', urlPattern: '/' },
       amqp: { method: 'rpc', q: 'auth.users.list' },
     },
