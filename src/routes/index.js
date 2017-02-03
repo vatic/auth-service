@@ -8,7 +8,7 @@ const routes = {
     {
       action: 'show',
       http: { method: 'get', urlPattern: '/:id' },
-      amqp: { method: 'rpc', q: 'auth.users.show' },
+      amqp: { method: 'rpc', q: 'auth.users.show', params: { id: 'number' } },
     },
   ],
   sessions: [

@@ -3,6 +3,7 @@
 // const MongoClient = require('mongodb').MongoClient;
 
 const KoaApp = require('./lib/http_transport');
+const AmqpApp = require('./lib/ampq_transport');
 const routes = require('./routes');
 const controllers = require('./controllers');
 
@@ -21,6 +22,9 @@ const app = async (config/* : Object */) => {
 
   const koaApp = new KoaApp(routes, controllers, config.http);
   koaApp.run();
+
+  const amqpApp = new AmqpApp(routes, controllers, config.amqp.host, config.prefix);
+  amqpApp.run();
   // Initialize connection once
   // const db = await connectDb(mongodb.host, mongodb.port, mongodb.db);
   // const rmq = await connectRabbitMQ(amqpHost);

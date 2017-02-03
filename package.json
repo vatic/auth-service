@@ -29,6 +29,7 @@
     "nodemon": "1.11.0"
   },
   "config": {
+    "prefix": "auth",
     "http": {
       "host": "localhost",
       "port": 3011
