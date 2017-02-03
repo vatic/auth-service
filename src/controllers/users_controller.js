@@ -1,40 +1,30 @@
-const { info } = require('../utils/logger');
-const Router = require('koa-router');
+// const { info } = require('../utils/logger');
 
-const router = new Router({ prefix: '/auth' });
+// module.exports = {
+//   startRmq: (conn) => {
+//     const q = 'rabbit.test.vatagin';
+//     conn.createChannel((chErr, ch) => {
+//       ch.assertQueue(q, { durable: false });
+//       info(' [*] Waiting for messages in %s. To exit press CTRL+C', q);
 
-// eslint-disable-next-line no-unused-vars
-router.get('/', async (ctx, next) => {
-  // eslint-disable-next-line no-param-reassign
-  ctx.body = {
-    route: 'auth',
-    msg: 'This is Auth route',
-  };
-});
+//       ch.consume(q, (msg) => {
+//         info(' [x] Received %s', msg.content.toString());
+//       }, { noAck: true });
+//     });
+//   },
+// };
 
-module.exports = {
-  startRmq: (conn) => {
-    const q = 'rabbit.test.vatagin';
-    conn.createChannel((chErr, ch) => {
-      ch.assertQueue(q, { durable: false });
-      info(' [*] Waiting for messages in %s. To exit press CTRL+C', q);
+const UsersController = {
+  users: [
+      { name: 'Sergey Vatagin', email: 's.vagatin@gmail.com' },
+      { name: 'Petr Ivanov', email: 'p.i@ya.ru' },
+      { name: 'Alex Mir', email: 'a.mir@mail.ru' },
+  ],
 
-      ch.consume(q, (msg) => {
-        info(' [x] Received %s', msg.content.toString());
-      }, { noAck: true });
-    });
-  },
-  startHttp: (koaApp) => {
-    koaApp.use(router.routes());
-    koaApp.use(router.allowedMethods());
-  },
-  startDb: (db) => {
+  index: () => {
+    console.log('fdsa:f: ', UsersController.users);
+    return UsersController.users;
   },
 };
 
-class UsersController {
-  index() {
-    const users = UserModel.getAll();
-
-  } 
-}
+module.exports = UsersController;

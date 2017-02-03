@@ -4,9 +4,12 @@ const MongoClient = require('mongodb').MongoClient;
 const Koa = require('koa');
 const cors = require('kcors');
 
+const { resolveRoutes } = require('./lib/http_service');
+const routes = require('./routes');
+
 const { log, error } = require('./utils/logger');
 
-const { usersController } = require('./controllers');
+// const { usersController } = require('./controllers');
 
 function fatal(msg, err) {
   error(msg);
@@ -33,21 +36,25 @@ const connectRabbitMQ = (host) => {
 };
 
 
+
+
 const app = async (config/* : Object */) => {
   // let db;
   const koaApp = new Koa();
   const { http, amqp: { host: amqpHost }, mongodb } = config;
   // Initialize connection once
-  const db = await connectDb(mongodb.host, mongodb.port, mongodb.db);
-  const rmq = await connectRabbitMQ(amqpHost);
+  // const db = await connectDb(mongodb.host, mongodb.port, mongodb.db);
+  // const rmq = await connectRabbitMQ(amqpHost);
 
   // response
   koaApp.use(cors());
-  usersController.startHttp(koaApp);
+  resolveRoutes(koaApp, routes);
+  // usersController.startHttp(koaApp);
   koaApp.listen(http.port, () => log(`server started ${http.port}`));
+  // http.createServer(app.callback()).listen(3000);
 
-  usersController.startRmq(rmq);
-  usersController.startDb(db);
+  // usersController.startRmq(rmq);
+  // usersController.startDb(db);
 };
 
 module.exports = app;
