@@ -2,19 +2,20 @@ const amqp = require('amqplib/callback_api');
 
 const { info /* : *Function */ } = require('../utils/logger');
 const fatal /* : *Function */ = require('../utils/fatal');
+const { capitalize /* : *Function */ } = require('../utils/string');
 
 class AmqpApp {
-  constructor(routes = null, controllers = null, host = 'amqp://localhost', prefix = 'rpc') {
+  constructor(routes = null, controllers = null, config = { host: 'amqp://localhost' }, prefix = 'rpc') {
     this.routes = routes;
     this.controllers = controllers;
-    this.host = host;
+    this.host = config.host;
     this.prefix = prefix;
   }
 
-  connectRabbitMQ(host) {
+  _connectRabbitMQ(host) {
     return new Promise((resolve, reject) => {
       amqp.connect(host, (err, conn) => {
-        if (err != null) reject(err);// fatal('AMQP connect error.', err);
+        if (err != null) reject(err);
         resolve(conn);
       });
     });
@@ -29,13 +30,11 @@ class AmqpApp {
           ch.assertQueue(q, { durable: false });
           ch.prefetch(1);
           info(' [x] Awaiting RPC requests on %s queue', q);
-          ch.consume(q, (msg) => {
-            // const n = parseInt(msg.content.toString(), 10);
-            // msg = { timestamp: Date(), params: {}, queryParams: {}}
+          ch.consume(q, async (msg) => {
             const { timestamp, params } = JSON.parse(msg.content);
 
-            const controller = `${entity.slice(0, 1).toUpperCase()}${entity.slice(1)}Controller`;
-            const r = this.controllers[controller][route.action](params);
+            const controller = `${capitalize(entity)}Controller`;
+            const r = await this.controllers[controller][route.action](params);
             info(' [.] ', timestamp);
             info(' [.] ', r);
 
@@ -54,7 +53,7 @@ class AmqpApp {
     if (!this.routes || !this.controllers) {
       fatal('No valid routes OR valid controllers.', null);
     }
-    this.connection = await this.connectRabbitMQ();
+    this.connection = await this._connectRabbitMQ();
     this.resolveRoutes();
   }
 

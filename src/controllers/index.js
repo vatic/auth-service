@@ -1,5 +1,8 @@
-const UsersController = require('./users_controller');
+const UsersControllerCreator = require('./users_controller');
 
-module.exports = {
-  UsersController,
+module.exports = function controllers(models) {
+  return {
+    UsersController: UsersControllerCreator(models),
+  };
 };
+

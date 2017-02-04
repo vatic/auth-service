@@ -5,6 +5,7 @@ const logger = require('koa-logger');
 
 const { log /* : *Function */ } = require('../utils/logger');
 const fatal /* : *Function */ = require('../utils/fatal');
+const { capitalize /* : *Function */ } = require('../utils/string');
 
 class KoaApp extends Koa {
   constructor(routes = null, controllers = null, config = { port: 3011 }) {
@@ -19,9 +20,9 @@ class KoaApp extends Koa {
       const router = new Router({ prefix: `/${entity}` });
       this.routes[entity].forEach((route) => {
         router[route.http.method](route.http.urlPattern, async (ctx) => {
-          const controller = `${entity.slice(0, 1).toUpperCase()}${entity.slice(1)}Controller`;
+          const controller = `${capitalize(entity)}Controller`;
           // eslint-disable-next-line no-param-reassign
-          ctx.body = this.controllers[controller][route.action](ctx.params);
+          ctx.body = await this.controllers[controller][route.action](ctx.params);
         });
         this.use(router.routes());
         this.use(router.allowedMethods());
