@@ -13,18 +13,12 @@ async function insertUsers() {
       { name: 'Petr Ivanov', email: 'p.i@ya.ru' },
       { name: 'Alex Mir', email: 'a.mir@mail.ru' },
   ];
-  db.collection('users').insertMany(users, (err, r) => {
-    // assert.equal(null, err);
-    if (err) {
-      fatal('Error insert users to auth', err);
-    }
-
-    info(3, r.insertedCount);
-
-    db.close();
-  });
-  db.collection('users').find().then( (res) => console.log('find res: ', res.toArray()));
-  ;
+  await db.collection('users').remove();
+  await db.collection('users').insertMany(users);
+  const res = await db.collection('users').find().toArray();
+  console.log('find res: ', res);
+  db.close();
+  process.exit(0);
 }
 
 insertUsers();

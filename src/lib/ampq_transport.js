@@ -29,7 +29,7 @@ class AmqpApp {
 
           ch.assertQueue(q, { durable: false });
           ch.prefetch(1);
-          info(' [x] Awaiting RPC requests on %s queue', q);
+          info(' [x] Awaiting RPC requests on \x1b[1m%s\x1b[0m', q);
           ch.consume(q, async (msg) => {
             const { timestamp, params } = JSON.parse(msg.content);
 

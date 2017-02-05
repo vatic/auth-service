@@ -3,21 +3,30 @@ const cors = require('kcors');
 const Router = require('koa-router');
 const logger = require('koa-logger');
 
-const { log /* : *Function */ } = require('../utils/logger');
+const { log /* : *Function */, info} = require('../utils/logger');
 const fatal /* : *Function */ = require('../utils/fatal');
 const { capitalize /* : *Function */ } = require('../utils/string');
 
 class KoaApp extends Koa {
-  constructor(routes = null, controllers = null, config = { port: 3011 }) {
+  constructor(
+    routes = null,
+    controllers = null,
+    config = { port: 3011 },
+    routePrefix
+  ) {
     super();
     this.routes = routes;
     this.controllers = controllers;
     this.port = config.port;
+    this.routePrefix = routePrefix;
+    this.resoulvedRoutesPaths =[];
   }
 
   resolveRoutes() {
     Object.keys(this.routes).forEach((entity) => {
-      const router = new Router({ prefix: `/${entity}` });
+      const routePath = `/${this.routePrefix}/${entity}`;
+      this.resoulvedRoutesPaths.push(routePath);
+      const router = new Router({ prefix: routePath });
       this.routes[entity].forEach((route) => {
         router[route.http.method](route.http.urlPattern, async (ctx) => {
           const controller = `${capitalize(entity)}Controller`;
@@ -36,7 +45,10 @@ class KoaApp extends Koa {
       fatal('No valid routes OR valid controllers.', null);
     }
     this.resolveRoutes(this.routes, this.controllers);
-    this.listen(this.port, () => log(`server started ${this.port}`));
+    this.listen(this.port, () => log(` [x] Http Server started \x1b[1m${this.port}\x1b[0m\n`));
+    this.resoulvedRoutesPaths.forEach( (path) => {
+      info(` [x] Listen on \x1b[1m${path}\x1b[0m`);
+    });
   }
 
 }

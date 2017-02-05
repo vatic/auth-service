@@ -1,10 +1,10 @@
 module.exports = function UsersControllerCreator(models) {
   return {
-    index: async () => {
-      const res = await models.User.findAll();
-      return res;
+    index: () => models.User.findAll(),
+    show: params => {
+      console.log('params: ', params);
+      return models.User.find(params.id)
     },
-    show: id => models.User.findAll(),
   };
 };
 
