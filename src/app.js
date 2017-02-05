@@ -8,11 +8,12 @@ const modelsFabric = require('./models');
 
 const app = async (config/* : Object */) => {
   const db = await mongo.connect(config.mongodb);
+  const controllers = controllersFabric(modelsFabric(db));
 
-  const koaApp = new KoaApp(routes, controllersFabric(modelsFabric(db)), config.http, config.prefix);
+  const koaApp = new KoaApp(routes, controllers, config.http, config.prefix);
   koaApp.run();
 
-  const amqpApp = new AmqpApp(routes, controllersFabric(modelsFabric(db)), config.amqp, config.prefix);
+  const amqpApp = new AmqpApp(routes, controllers, config.amqp, config.prefix);
   amqpApp.run();
 };
 
