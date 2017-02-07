@@ -4,9 +4,19 @@ const bcrypt = require('bcrypt-promise');
 
 // UserModel
 module.exports = function UserModelCreator(db) {
+  const collection = db.collection('users');
   return {
-    findAll: () => db.collection('users').find().toArray(),
-    find: id => db.collection('users').find({ _id: ObjectId(id) }).toArray(),
+    findAll: () => collection.find().toArray(),
+    find: id => collection.find({ _id: ObjectId(id) }).toArray(),
+    findByEmail: email => collection.findOne({ email }),
+    create: user => collection.save(user),
+
+    addInvalidToken: (id, token) => {
+      return collection.updateOne(
+        { _id: ObjectId(id) },
+        { $set: { invalidTokens: { $push: token } } }
+      );
+    },
 
     comparePassword: (pwd, cb) => {
       bcrypt.compare(pwd, this.password, (err, isMatch) => {

@@ -9,9 +9,9 @@ async function insertUsers() {
   const config = JSON.parse(fs.readFileSync(configFile)).config;
   const db = await mongo.connect(config.mongodb);
   const users = [
-      { name: 'Sergey Vatagin', email: 's.vagatin@gmail.com' },
-      { name: 'Petr Ivanov', email: 'p.i@ya.ru' },
-      { name: 'Alex Mir', email: 'a.mir@mail.ru' },
+      { name: 'Sergey Vatagin', email: 's.vatagin@gmail.com', password: 'v1' },
+      { name: 'Petr Ivanov', email: 'p.i@ya.ru', password: 'p1' },
+      { name: 'Alex Mir', email: 'a.mir@mail.ru', password: 'a2' },
   ];
   await db.collection('users').remove();
   await db.collection('users').insertMany(users);
