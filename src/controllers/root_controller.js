@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { error } = require('../utils/logger');
 
 module.exports = function RootControllerCreator(models) {
   return {
@@ -29,12 +30,15 @@ module.exports = function RootControllerCreator(models) {
       try {
         const decodedToken = jwt.verify(token, 'secret');
 
-        const user = await models.User.find(decodedToken._id);
-        if (!user) {
-          return { error: 'User not found' };
+        try {
+          const user = await models.User.findAndCheckInvalidToken(decodedToken._id, token);
+          if (!user || Object.keys(user).length === 0) {
+            return { error: 'User not found or token invalid' };
+          }
+          return user;
+        } catch (e) {
+          error('error', e);
         }
-
-        return user;
       } catch (err) {
         return err;
       }
@@ -50,12 +54,13 @@ module.exports = function RootControllerCreator(models) {
         const decodedToken = jwt.verify(token, 'secret');
 
         const user = await models.User.find(decodedToken._id);
+        console.log(user._id);
         if (!user) {
           return { error: 'User not found' };
         }
 
         try {
-          const res = await models.User.addInvalidToken();
+          const res = await models.User.addInvalidToken(user._id, token);
         } catch (e) {
           return { error: 'error add invalid token' };
         }

@@ -32,7 +32,6 @@ class KoaApp extends Koa {
       this.routes[entity].forEach((route) => {
         this.resoulvedRoutesPaths.push(`${route.http.method.toUpperCase()} ${routePath}${route.http.urlPattern}`);
         router[route.http.method](route.http.urlPattern, async (ctx) => {
-          console.dir(ctx.request.headers);
           const controller = `${capitalize(entity)}Controller`;
           // eslint-disable-next-line no-param-reassign
           ctx.body = await this.controllers[controller][route.action](ctx.params, ctx.request.body, ctx.request.headers);
