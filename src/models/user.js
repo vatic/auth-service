@@ -10,16 +10,12 @@ module.exports = function UserModelCreator(db) {
     find: id => collection.findOne({ _id: ObjectId(id) }),
 
     findAndCheckInvalidToken: (id, token) => {
-      console.log('id', id);
-      console.log('token', token);
-      const res = collection.findOne({
+      return collection.findOne({
         _id: ObjectId(id),
         invalidTokens: { 
           $not: { $elemMatch: { $eq: token } }
         }
       });
-      console.log('res: ',res);
-      return res;
     },
 
     findByEmail: email => collection.findOne({ email }),

@@ -54,7 +54,6 @@ module.exports = function RootControllerCreator(models) {
         const decodedToken = jwt.verify(token, 'secret');
 
         const user = await models.User.find(decodedToken._id);
-        console.log(user._id);
         if (!user) {
           return { error: 'User not found' };
         }
